@@ -1,0 +1,34 @@
+{
+  "window": {
+    "title_pattern": "GGPoker",
+    "capture_region": null
+  },
+  "buttons": {
+    "fold": {"x": 0, "y": 0},
+    "check": {"x": 0, "y": 0},
+    "call": {"x": 0, "y": 0},
+    "raise": {"x": 0, "y": 0},
+    "bet_input": {"x": 0, "y": 0}
+  },
+  "hotkeys": {
+    "trigger_ai": "f1",
+    "toggle_auto": "f2",
+    "quick_fold": "f3",
+    "quick_check": "f4",
+    "emergency_stop": "escape"
+  },
+  "timing": {
+    "min_delay_ms": 1000,
+    "max_delay_ms": 3000,
+    "typing_delay_ms": 50
+  },
+  "ai": {
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "model": "claude-sonnet-4-20250514",
+    "max_tokens": 1024
+  },
+  "data": {
+    "sessions_dir": "./data/sessions",
+    "stats_file": "./data/player_stats.csv"
+  }
+}
