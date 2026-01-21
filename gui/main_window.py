@@ -416,7 +416,24 @@ class MainWindow(QMainWindow):
         if not self._is_running:
             return
 
+        # Hide bot window and bring poker window to front
+        self.hide()
+        QApplication.processEvents()
+        time.sleep(0.2)
+
+        self._window_manager.bring_to_front()
+        QApplication.processEvents()
+        time.sleep(0.3)
+
+        # Perform the action on poker window
         success = self._actions.perform_action(decision.action, decision.amount)
+
+        # Restore bot window
+        time.sleep(0.2)
+        self.show()
+        self.activateWindow()
+        QApplication.processEvents()
+
         if success:
             self._log_viewer.log_success(f"Executed: {decision.action}")
         else:
@@ -429,24 +446,45 @@ class MainWindow(QMainWindow):
         self._log_viewer.log(f"Auto-play: {status}", "INFO")
         self._update_status(f"Auto-play: {status}")
 
+    def _perform_quick_action(self, action_name: str, action_func):
+        """Perform a quick action on the poker window."""
+        # Hide bot window and bring poker window to front
+        self.hide()
+        QApplication.processEvents()
+        time.sleep(0.2)
+
+        self._window_manager.bring_to_front()
+        QApplication.processEvents()
+        time.sleep(0.3)
+
+        # Perform the action
+        success = action_func()
+
+        # Restore bot window
+        time.sleep(0.2)
+        self.show()
+        self.activateWindow()
+        QApplication.processEvents()
+
+        if success:
+            self._log_viewer.log_action("Hero", action_name)
+
     def _quick_fold(self):
         """Quick fold action."""
         if self._is_running:
-            if self._actions.perform_fold():
-                self._log_viewer.log_action("Hero", "fold")
+            self._perform_quick_action("fold", self._actions.perform_fold)
 
     def _quick_check(self):
         """Quick check/call action."""
         if self._is_running:
-            if self._actions.perform_check():
-                self._log_viewer.log_action("Hero", "check")
+            self._perform_quick_action("check", self._actions.perform_check)
 
     def _quick_raise(self):
         """Quick raise action with configured amount."""
         if self._is_running:
             raise_amount = self._settings.get("quick_raise_bb", default=2.5)
-            if self._actions.perform_raise(raise_amount):
-                self._log_viewer.log_action("Hero", f"raise {raise_amount}BB")
+            self._perform_quick_action(f"raise {raise_amount}BB",
+                                       lambda: self._actions.perform_raise(raise_amount))
 
     def _emergency_stop(self):
         """Emergency stop all actions."""
